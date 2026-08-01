@@ -1,2 +1,4 @@
 .env
-.mypy_chache
+.mypy_cache
+
+.vscode
