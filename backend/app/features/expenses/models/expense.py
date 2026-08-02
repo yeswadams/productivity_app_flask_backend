@@ -5,7 +5,7 @@ class Expense(db.model):
     __tablename__ = 'expenses'
 
     id = db.Column(db.Integer, primary_key=True)
-    tittle = db.Column(db.String(120), nullable=False)
+    title = db.Column(db.String(120), nullable=False)
 
     amount = db.Column(db.Numeric(10, 2), nullable=False)
 
@@ -15,6 +15,11 @@ class Expense(db.model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
 
+    # Check constraints
+    __table_args__ = (
+        db.CheckConstraint('amount > 0', name='ck_expenses_amount_positive'),
+        db.CheckConstraint("length(title) >=1", name='ck_expenses_title_not_empty')
+    ) 
 
     def __repr__(self):
         return f"<Expense {self.title} - ${self.amount}"
