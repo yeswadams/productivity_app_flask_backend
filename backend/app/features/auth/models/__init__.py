@@ -1,7 +1,9 @@
-from .reset_token import password_reset_token
+from .reset_token import PasswordResetToken
 from .user import User
+from .expense import Expense
 
 __all__ = [
-    "reset_token",
-    "User"
+    "User",
+    "PasswordResetToken",
+    "Expense"
 ]
