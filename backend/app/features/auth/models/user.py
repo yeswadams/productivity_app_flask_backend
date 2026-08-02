@@ -12,6 +12,12 @@ class User(db.model):
     expenses = db.relationship('Expense', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     reset_token = db.relationship('PasswordResetToken', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
+    # Check constraints
+    __table_args__ = (
+        db.CheckConstraint('length(username) >3', name='ck_users_username_min_length'),
+        db.CheckConstraint('email LIKE "%@%"', name='ck_users_email_valid_format'),
+    )
+
     def set_password(self, plain_text_password):
         # Responsible for hashing the password
         self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
