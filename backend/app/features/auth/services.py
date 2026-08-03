@@ -5,7 +5,7 @@ from app.features.auth.models import User
 
 class AuthService:
     @staticmethod
-    def register_user(username: str, email: str, password: str) -> User:
+    def register_user(username: str, password: str) -> User:
         """Hashes password and creates a new user in the db"""
 
         if User.query.filter_by(username=username).first():
