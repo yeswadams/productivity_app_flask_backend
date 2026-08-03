@@ -73,7 +73,7 @@ def login():
 
 
 
-@auth_bp.route('refresh', method=['POST'])
+@auth_bp.route('/refresh', method=['POST'])
 @jwt_required(refresh=True)
 def refresh_token():
     """POST /api/v1/auth/refresh (Requires a refresh token)"""
