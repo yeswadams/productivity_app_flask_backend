@@ -7,10 +7,8 @@ class Config():
     Base config shared accross all environments
     """
     SECRET_KEY = os.getenv(
-        "SECRET_KEY"
+        'SECRET_KEY', 'dev-secret-key-change-in-prod'
     )
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'super-secret-jwt-key')
     # SQLAlchemy Settings
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    # Flask setting for preventing Flask from sorting JSON in alphabetic order
-    JSON_SORT_KEYS = False

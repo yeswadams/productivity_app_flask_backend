@@ -10,6 +10,7 @@ class UserSchema(SQLAlchemyAutoSchema):
         load_instance = True 
         include_fk = True
         sqla_session = None
+        ordered = True
     
     id = fields.Integer(dump_only=True)
     username = fields.String(

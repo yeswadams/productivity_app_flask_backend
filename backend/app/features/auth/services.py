@@ -24,12 +24,12 @@ class AuthService:
 
     @staticmethod
     def authenticate_user(username: str, password: str) -> dict:
-        """Verifies credentials and returns acces & refresh JWT tokens."""
+        """Verifies credentials and returns access & refresh JWT tokens."""
 
         user = User.query.filter_by(username=username).first() 
 
         if not user or not bcrypt.check_password_hash(user._password_hash, password):
-            raise ValueError("Invalid email or password")
+            raise ValueError("Invalid username or password")
 
         # Generate JWT
         identity = str(user.id)

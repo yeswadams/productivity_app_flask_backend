@@ -6,12 +6,11 @@ class PasswordResetToken(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(100), nullable=False)
-    is_used = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc), nullable=False)
-    expirats_at = db.Column(db.DateTime, nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
-    user = db.relationship('User', backref='reset_tokens')
+    user = db.relationship('User', back_populates='reset_tokens')
 
     def is_valid(self):
         """Checks if token has not expired and has not been used yet"""

@@ -16,6 +16,13 @@ from app.features.expenses.models import Expense
 #blueprints
 from app.features.auth.routes import auth_bp
 
+def register_bp(app):
+    app.register_blueprint(
+        auth_bp,
+        url_prefix='/api/v1/auth'
+    )
+
+
 def create_app(config_name=None):
     app = Flask(__name__)
 
@@ -28,6 +35,7 @@ def create_app(config_name=None):
     print(f"--> Current config_name: {config_name}")
     print(f"--> Selected Config class: {selected_config}")
     print(f"--> Loaded SQLALCHEMY_DATABASE_URI: {app.config.get('SQLALCHEMY_DATABASE_URI')}")
+    app.json.sort_keys=False
 
     # initializes the extensions
     db.init_app(app)
@@ -35,14 +43,9 @@ def create_app(config_name=None):
     jwt.init_app(app)
     bcrypt.init_app(app)
 
-    app.register_blueprint(auth_bp)
+    register_bp(app)
 
     return app
 
-def register_bp(app):
-    app.register_blueprint(
-        auth_bp,
-        url_prefix='/api/v1/programs'
-    )
 
     
