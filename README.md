@@ -1,4 +1,4 @@
-# Productivity App  Flask Backend
+# Productivity App (Flask Backend Auth)
 
 ## Project Description
 This repository contains a production-style flask backend  
