@@ -1,3 +1,4 @@
+import os
 from .base import Config
 
 class ProductionConfig(Config):
@@ -6,3 +7,4 @@ class ProductionConfig(Config):
     """
     DEBUG = False
     TESTING = False
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')

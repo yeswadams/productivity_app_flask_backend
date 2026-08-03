@@ -1,11 +1,13 @@
-from .base import Config
 from .development import DevelopmentConfig
 from .production import ProductionConfig
 from .testing import TestingConfig
+from typing import Any as any
 
-__all__: list[str] = [
-    "Config",
-    "DevelopmentConfig",
-    "ProductionConfig",
-    "TestingConfig"
-]
+config_by_name: dict[str, any] = {
+    'development': DevelopmentConfig,
+    'dev': DevelopmentConfig,
+    'production': ProductionConfig,
+    'prod': ProductionConfig,
+    'testing': TestingConfig,
+    'default': DevelopmentConfig
+}

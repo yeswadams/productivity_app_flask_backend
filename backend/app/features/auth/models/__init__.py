@@ -1,9 +1,7 @@
 from .reset_token import PasswordResetToken
-from .user import User
-from .expense import Expense
+from .user_model import User
 
 __all__ = [
     "User",
     "PasswordResetToken",
-    "Expense"
 ]

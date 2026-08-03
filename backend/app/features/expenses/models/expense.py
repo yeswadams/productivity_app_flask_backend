@@ -1,7 +1,7 @@
 from app.extensions.database import db
 from datetime import datetime, timezone
 
-class Expense(db.model):
+class Expense(db.Model):
     __tablename__ = 'expenses'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -10,8 +10,8 @@ class Expense(db.model):
     amount = db.Column(db.Numeric(10, 2), nullable=False)
 
     description = db.Column(db.Text, nullable=True)
-    date= db.Column(db.DateTime, default=datetime(timezone.utc))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    date= db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
 

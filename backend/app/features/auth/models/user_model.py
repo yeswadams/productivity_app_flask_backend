@@ -3,7 +3,7 @@ from app.extensions.database import db
 from app.extensions.bcrypt import bcrypt
 
 
-class User(db.model):
+class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -15,7 +15,6 @@ class User(db.model):
     # Check constraints
     __table_args__ = (
         db.CheckConstraint('length(username) >3', name='ck_users_username_min_length'),
-        db.CheckConstraint('email LIKE "%@%"', name='ck_users_email_valid_format'),
     )
 
     def set_password(self, plain_text_password):
