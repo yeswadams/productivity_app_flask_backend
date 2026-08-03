@@ -13,9 +13,12 @@ from app.features.auth.schemas.user_schema import (
 )
 from app.features.auth.services import AuthService
 
-auth_bp = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
+auth_bp = Blueprint(
+    'auth', 
+    __name__
+)
 
-@auth_bp.route('/register', method=['POST'])
+@auth_bp.post('/register')
 def register():
     """POST /api/v1/auth/register"""
 
@@ -42,7 +45,7 @@ def register():
 
     
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.post('/login')
 def login():
     """POST /api/v1/auth/login"""
 
@@ -73,7 +76,7 @@ def login():
 
 
 
-@auth_bp.route('/refresh', method=['POST'])
+@auth_bp.post('/refresh')
 @jwt_required(refresh=True)
 def refresh_token():
     """POST /api/v1/auth/refresh (Requires a refresh token)"""

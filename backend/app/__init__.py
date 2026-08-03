@@ -13,6 +13,9 @@ from app.extensions.migrate import migrate
 from app.features.auth.models import User, PasswordResetToken
 from app.features.expenses.models import Expense
 
+#blueprints
+from app.features.auth.routes import auth_bp
+
 def create_app(config_name=None):
     app = Flask(__name__)
 
@@ -32,7 +35,14 @@ def create_app(config_name=None):
     jwt.init_app(app)
     bcrypt.init_app(app)
 
+    app.register_blueprint(auth_bp)
+
     return app
 
-    
+def register_bp(app):
+    app.register_blueprint(
+        auth_bp,
+        url_prefix='/api/v1/programs'
+    )
+
     
