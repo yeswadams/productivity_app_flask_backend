@@ -17,4 +17,4 @@ class PasswordResetToken(db.Model):
         return not self.is_used and datetime.now(timezone.utc)
 
     def __repr__(self):
-        return f"<PasswordResetToken user_id+{self.user_id} used={self.is_used}>"
+        return f"<PasswordResetToken user_id={self.user_id} used={self.is_used}>"
