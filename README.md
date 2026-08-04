@@ -1,4 +1,4 @@
-# Productivity App API
+# Productivity App API - (Feature-First Architecture)
 
 A Flask backend for a personal expense-tracking productivity app. Users register and authenticate with JWT bearer tokens, then create and manage their own expenses. Every expense query is scoped to the authenticated user's ID, so a user cannot list, retrieve, edit, or delete another user's data.
 
