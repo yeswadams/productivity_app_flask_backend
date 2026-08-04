@@ -11,6 +11,7 @@ class UserSchema(SQLAlchemyAutoSchema):
         include_fk = True
         sqla_session = None
         ordered = True
+        exclude = ("_password_hash") # excludes password hash from serilization objects
     
     id = fields.Integer(dump_only=True)
     username = fields.String(
