@@ -15,11 +15,16 @@ from app.features.expenses.models import Expense
 
 #blueprints
 from app.features.auth.routes import auth_bp
+from app.features.expenses.routes import expenses_bp
 
 def register_bp(app):
     app.register_blueprint(
         auth_bp,
         url_prefix='/api/v1/auth'
+    )
+    app.register_blueprint(
+        expenses_bp,
+        url_prefix='/api/v1/expenses'
     )
 
 

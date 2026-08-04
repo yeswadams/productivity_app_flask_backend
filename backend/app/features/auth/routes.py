@@ -3,7 +3,8 @@ from marshmallow import ValidationError
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
-    create_access_token
+    create_access_token,
+    get_jwt
 )
 
 from app.features.auth.schemas.user_schema import (
@@ -29,7 +30,7 @@ def register():
     try:
         data = user_register_schema.load(json_data)
     except ValidationError as err:
-        return jsonify({"erros": err.messages}), 422
+        return jsonify({"errors": err.messages}), 422
 
     try:
         user = AuthService.register_user(
@@ -83,3 +84,25 @@ def refresh_token():
     current_user_id = get_jwt_identity()
     new_access_token = create_access_token(identity=current_user_id)
     return jsonify({"access_token": new_access_token}), 200
+
+@auth_bp.post('/logout')
+@jwt_required()
+def logout():
+    """POST /api/v1/auth/logout - Revokes the user's active access token."""
+    jti = get_jwt()["jti"]
+    AuthService.logout_user(jti)
+    return jsonify({"message": "Successfully logged out"}), 200
+
+
+@auth_bp.get('/me')
+@jwt_required()
+def get_current_user():
+    """GET /api/v1/auth/me - Get current user information"""
+    try:
+        current_user_id = int(get_jwt_identity())
+        user = AuthService.get_user_by_id(current_user_id)
+        return jsonify({
+            "user": user_schema.dump(user)
+        }), 200
+    except ValueError as err:
+        return jsonify({"message": str(err)}), 404

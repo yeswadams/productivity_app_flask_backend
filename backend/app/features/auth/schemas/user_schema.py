@@ -11,7 +11,7 @@ class UserSchema(SQLAlchemyAutoSchema):
         include_fk = True
         sqla_session = None
         ordered = True
-        exclude = ("_password_hash") # excludes password hash from serilization objects
+        exclude = ["_password_hash"] # excludes password hash from serilization objects
     
     id = fields.Integer(dump_only=True)
     username = fields.String(
@@ -24,23 +24,23 @@ class UserSchema(SQLAlchemyAutoSchema):
             )
         ]
     )
-    passwordhash= fields.String(
-        required=True, 
-        load_only=True, 
-        validate=validate.Length(min=8, error="Password must be at least 8 characters")
-    )
-
     created_at = fields.DateTime(dump_only=True)
 
 class UserRegisterSchema(Schema):
     """Schema for POST /auth/register payloads"""
     username = fields.Str(
         required=True,
-        validate=validate.Length(min=3, max=50)
+        validate=[
+            validate.Length(min=3, max=50),
+            validate.Regexp(
+                r'^[a-zA-z0-9_]+$',
+                error="Username can only contain letters, numbers and underscores"
+            )
+        ]
     )
     password = fields.Str(
         required=True,
-        validate=validate.Length(min=8)
+        validate=validate.Length(min=8, error="Password must be at least 8 characters")
     )
 
 class UserLoginSchema(Schema):

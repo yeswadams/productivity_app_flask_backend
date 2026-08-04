@@ -2,6 +2,7 @@ from app.extensions.database import db
 from app.extensions.bcrypt import bcrypt
 from flask_jwt_extended import create_access_token, create_refresh_token
 from app.features.auth.models import User
+from app.features.auth.models.token_blocklist import TokenBlocklist
 
 class AuthService:
     @staticmethod
@@ -41,6 +42,13 @@ class AuthService:
             "access_token": access_token,
             "refresh_token": refresh_token
         }
+
+    @staticmethod
+    def logout_user(jti: str) -> None:
+        """Revokes the current user's JWT token by adding its JTI to the blocklist."""
+        blocked_token = TokenBlocklist(jti=jti)
+        db.session.add(blocked_token)
+        db.session.commit()
 
     @staticmethod
     def get_user_by_id(user_id: int) -> User:

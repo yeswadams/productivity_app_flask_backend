@@ -13,10 +13,11 @@ class ExpenseSchema(SQLAlchemyAutoSchema):
 
     id = fields.Integer(dump_only=True)
     title = fields.String(required=True, validate=validate.Length(min=1, max=120))
-    amount = fields.String(required=True, as_string=True, places=2)
+    amount = fields.Float(required=True, validate=validate.Range(min=0.01))
     description = fields.String(allow_none=True)
-    date = fields.DateTime()
+    date = fields.DateTime(allow_none=True)
     user_id = fields.Integer(dump_only=True)
     created_at = fields.DateTime(dump_only=True)
 
-    
+# Singleton instance for clean imports
+expense_schema = ExpenseSchema()
