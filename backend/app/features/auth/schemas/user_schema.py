@@ -19,7 +19,7 @@ class UserSchema(SQLAlchemyAutoSchema):
         validate=[
             validate.Length(min=3, max=50, error='Username must be between 3 and 50 characters'),
             validate.Regexp(
-                r'^[a-zA-z0-9_]+$',
+                r'^[A-Za-z0-9_]+$',
                 error="Username can only contain letters, numbers and underscores"
             )
         ]
@@ -33,7 +33,7 @@ class UserRegisterSchema(Schema):
         validate=[
             validate.Length(min=3, max=50),
             validate.Regexp(
-                r'^[a-zA-z0-9_]+$',
+                r'^[A-Za-z0-9_]+$',
                 error="Username can only contain letters, numbers and underscores"
             )
         ]
@@ -42,6 +42,7 @@ class UserRegisterSchema(Schema):
         required=True,
         validate=validate.Length(min=8, error="Password must be at least 8 characters")
     )
+    password_confirmation = fields.Str(load_only=True)
 
 class UserLoginSchema(Schema):
     """Schema for POST /auth/login payloads"""

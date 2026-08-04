@@ -1,7 +1,7 @@
 from app.extensions.database import db
 from app.features.expenses.models import Expense
 from datetime import datetime, timezone
-from typing import Optional, List, Dict
+from typing import Optional, Dict, Any
 
 
 class ExpenseService:
@@ -56,23 +56,13 @@ class ExpenseService:
         return expense
 
     @staticmethod
-    def update_expense(expense_id: int, user_id: int, 
-                     title: Optional[str] = None, 
-                     amount: Optional[float] = None,
-                     description: Optional[str] = None,
-                     date: Optional[datetime] = None) -> Expense:
+    def update_expense(expense_id: int, user_id: int, updates: Dict[str, Any]) -> Expense:
         """Updates an existing expense for a user"""
         
         expense = ExpenseService.get_expense_by_id(expense_id, user_id)
         
-        if title is not None:
-            expense.title = title
-        if amount is not None:
-            expense.amount = amount
-        if description is not None:
-            expense.description = description
-        if date is not None:
-            expense.date = date
+        for field, value in updates.items():
+            setattr(expense, field, value)
         
         db.session.commit()
         return expense

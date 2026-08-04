@@ -19,61 +19,77 @@ auth_bp = Blueprint(
     __name__
 )
 
-@auth_bp.post('/register')
-def register():
-    """POST /api/v1/auth/register"""
 
-    json_data = request.get_json()
+def validation_error_response(errors):
+    """Return validation errors in a shape understood by the supplied client."""
+    messages = [message for field_errors in errors.values() for message in field_errors]
+    return jsonify({"errors": messages, "fields": errors}), 422
+
+
+def parse_registration_request():
+    json_data = request.get_json(silent=True)
     if not json_data:
-        return jsonify({"message": "No input data provided"}), 400
+        return None, (jsonify({"errors": ["No input data provided"]}), 400)
 
     try:
         data = user_register_schema.load(json_data)
     except ValidationError as err:
-        return jsonify({"errors": err.messages}), 422
+        return None, validation_error_response(err.messages)
 
+    confirmation = data.pop("password_confirmation", None)
+    if confirmation is not None and confirmation != data["password"]:
+        return None, (jsonify({"errors": ["Password confirmation does not match"]}), 422)
+    return data, None
+
+
+def register_user():
+    data, error = parse_registration_request()
+    if error:
+        return None, error
     try:
-        user = AuthService.register_user(
-            username=data['username'],
-            password=data['password']
-        )
-        return jsonify({
-            "message": "User registered successfully",
-            "user": user_schema.dump(user)
-        }), 201
+        return AuthService.register_user(**data), None
     except ValueError as err:
-        return jsonify({"message": str(err)}), 400
+        return None, (jsonify({"errors": [str(err)]}), 409)
 
-    
+
+def login_user():
+    json_data = request.get_json(silent=True)
+    if not json_data:
+        return None, (jsonify({"errors": ["No input data provided"]}), 400)
+    try:
+        data = user_login_schema.load(json_data)
+    except ValidationError as err:
+        return None, validation_error_response(err.messages)
+    try:
+        return AuthService.authenticate_user(**data), None
+    except ValueError as err:
+        return None, (jsonify({"errors": [str(err)]}), 401)
+
+@auth_bp.post('/register')
+def register():
+    """POST /api/v1/auth/register"""
+
+    user, error = register_user()
+    if error:
+        return error
+    return jsonify({
+        "message": "User registered successfully",
+        "user": user_schema.dump(user)
+    }), 201
 
 @auth_bp.post('/login')
 def login():
     """POST /api/v1/auth/login"""
 
-    json_data = request.get_json()
-    if not json_data:
-        return jsonify({
-            "message": "No input data provided"
-        }), 400
-
-    try:
-        data = user_login_schema.load(json_data)
-    except ValidationError as err:
-        return jsonify({"errors": err.messages}), 422
-
-    try: 
-        auth_data = AuthService.authenticate_user(
-            username=data['username'],
-            password=data['password']
-        )
-        return jsonify({
-            "message": "Login successful",
-            "access_token": auth_data['access_token'],
-            "refresh_token": auth_data['refresh_token'],
-            "user": user_schema.dump(auth_data['user'])
-        }), 200
-    except ValueError as err:
-        return jsonify({"message": str(err)}), 401
+    auth_data, error = login_user()
+    if error:
+        return error
+    return jsonify({
+        "message": "Login successful",
+        "access_token": auth_data['access_token'],
+        "refresh_token": auth_data['refresh_token'],
+        "user": user_schema.dump(auth_data['user'])
+    }), 200
 
 
 
@@ -106,3 +122,32 @@ def get_current_user():
         }), 200
     except ValueError as err:
         return jsonify({"message": str(err)}), 404
+
+
+# Compatibility routes required by the provided React JWT client. The versioned
+# API above remains the canonical API for new integrations.
+client_auth_bp = Blueprint('client_auth', __name__)
+
+
+@client_auth_bp.post('/signup')
+def signup_client():
+    user, error = register_user()
+    if error:
+        return error
+    auth_data = AuthService.authenticate_user(user.username, request.get_json()["password"])
+    return jsonify({"token": auth_data["access_token"], "user": user_schema.dump(user)}), 201
+
+
+@client_auth_bp.post('/login')
+def login_client():
+    auth_data, error = login_user()
+    if error:
+        return error
+    return jsonify({"token": auth_data["access_token"], "user": user_schema.dump(auth_data["user"])}), 200
+
+
+@client_auth_bp.get('/me')
+@jwt_required()
+def me_client():
+    user = AuthService.get_user_by_id(int(get_jwt_identity()))
+    return jsonify(user_schema.dump(user)), 200

@@ -124,10 +124,7 @@ def update_expense(expense_id):
         expense = ExpenseService.update_expense(
             expense_id=expense_id,
             user_id=current_user_id,
-            title=data.get('title'),
-            amount=data.get('amount'),
-            description=data.get('description'),
-            date=data.get('date')
+            updates={field: data[field] for field in ('title', 'amount', 'description', 'date') if field in data}
         )
         
         return jsonify({

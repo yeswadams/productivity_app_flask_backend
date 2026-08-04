@@ -12,12 +12,8 @@ class AuthService:
         if User.query.filter_by(username=username).first():
             raise ValueError("Username is already taken")
 
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-        user = User(
-            username=username,
-            _password_hash=hashed_password
-        )
+        user = User(username=username)
+        user.set_password(password)
 
         db.session.add(user)
         db.session.commit()
@@ -53,7 +49,7 @@ class AuthService:
     @staticmethod
     def get_user_by_id(user_id: int) -> User:
         """Fetches a user profile by ID"""
-        user = User.query.get(user_id)
+        user = db.session.get(User, user_id)
         if not user:
             raise ValueError("User not found")
         return user

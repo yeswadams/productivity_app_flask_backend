@@ -6,9 +6,9 @@ class Config():
     """
     Base config shared accross all environments
     """
-    SECRET_KEY = os.getenv(
-        'SECRET_KEY', 'dev-secret-key-change-in-prod'
+    SECRET_KEY = os.getenv('SECRET_KEY', 'development-only-secret-key-change-me')
+    JWT_SECRET_KEY = os.environ.get(
+        'JWT_SECRET_KEY', 'development-only-jwt-secret-key-change-me'
     )
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'super-secret-jwt-key')
     # SQLAlchemy Settings
     SQLALCHEMY_TRACK_MODIFICATIONS = False
